@@ -1,11 +1,17 @@
-package com.example.helloworld;
+package com.example.helloworld.activities;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
+
+import com.example.helloworld.R;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -15,6 +21,11 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,11 +35,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MapboxMap mapboxMap;
     private MapView mapView;
 
+
+    private static final String MARKER_SOURCE = "markers-source";
+    private static final String MARKER_STYLE_LAYER = "markers-style-layer";
+    private static final String MARKER_IMAGE = "custom-marker";
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_passenger_registration);
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -37,7 +55,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MainActivity.this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
+        mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+
+            style.addImage(MARKER_IMAGE, BitmapFactory.decodeResource(
+                    MainActivity.this.getResources(), R.drawable.custom_marker)); // image for marker
+
+            enableLocationComponent(style); //add user location
+            addMarkers(style); //add markers
+        });
+    }
+
+    private void addMarkers(@NonNull Style loadedMapStyle) {
+        List<Feature> features = new ArrayList<>();
+        features.add(Feature.fromGeometry(Point.fromLngLat(52.4231, 55.7614)));
+        features.add(Feature.fromGeometry(Point.fromLngLat(52.4278, 55.7605)));
+        features.add(Feature.fromGeometry(Point.fromLngLat(52.4170, 55.7594 )));
+
+        loadedMapStyle.addSource(new GeoJsonSource(MARKER_SOURCE, FeatureCollection.fromFeatures(features)));
+        loadedMapStyle.addLayer(new SymbolLayer(MARKER_STYLE_LAYER, MARKER_SOURCE)
+                .withProperties(
+                        PropertyFactory.iconAllowOverlap(true),
+                        PropertyFactory.iconIgnorePlacement(true),
+                        PropertyFactory.iconImage(MARKER_IMAGE),
+                        PropertyFactory.iconOffset(new Float[]{0f, -52f}),
+                        PropertyFactory.iconSize(0.2f)
+                ));
     }
 
     @SuppressWarnings( {"MissingPermission"})

@@ -31,20 +31,15 @@ import java.util.Objects;
 
 public class PassengerRegistrationActivity extends AppCompatActivity {
 
-    FirebaseAuth auth;
-    FirebaseDatabase db;
-    DatabaseReference passengers;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();;
+    private FirebaseDatabase db = FirebaseDatabase.getInstance();;
+    private DatabaseReference passengers = db.getReference("Passengers");;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_registration);
         Window w = getWindow();
-
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance();
-        passengers = db.getReference("Passengers");
-
 
         Button btnSignUp = (Button) findViewById(R.id.btn_sign_up);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -88,53 +83,69 @@ public class PassengerRegistrationActivity extends AppCompatActivity {
                         return;
                     }
 
+                    Passenger passenger = new Passenger(
+                            name.getText().toString(),
+                            email.getText().toString(),
+                            password.getText().toString(),
+                            phone.getText().toString(),
+                            Point.fromLngLat(55.762981, 52.418611),
+                            Point.fromLngLat(55.760372, 52.427470));
+                    createNewPassengerUserWithEmailAndPassword(email.getText().toString(), password.getText().toString());
+                    writeNewPassengerInfo(passenger);
 
-
-
-
-
-
-
-//                    auth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-//                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-//                                @Override
-//                                public void onSuccess(AuthResult authResult) {
-//
-//                                    Passenger passenger = new Passenger(
-//                                            name.getText().toString(),
-//                                            email.getText().toString(),
-//                                            password.getText().toString(),
-//                                            phone.getText().toString(),
-//                                            Point.fromLngLat(55.762981, 52.418611),
-//                                            Point.fromLngLat(55.760372, 52.427470));
-//
-//                                    passengers.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).
-//                                            setValue(passenger).addOnSuccessListener(aVoid -> {
-//                                        Snackbar.make(findViewById(R.id.root_passenger_registration),
-//                                                "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
-//
-//                                    });
-//                                }
-//                            }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Snackbar.make(findViewById(R.id.root_passenger_registration),
-//                                    "Что-то пошло не так!"+e.getMessage(), Snackbar.LENGTH_SHORT).show();
-//
-//                        }
-//                    });
-
-
-
-
-
-
-//                    Intent intent = new Intent(PassengerRegistrationActivity.this, ActivitySelection.class);
-//                    startActivity(intent);
-//                    finish();
+                    Intent intent = new Intent(PassengerRegistrationActivity.this, PassengerMainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }catch (Exception e){
-                    Snackbar.make(findViewById(R.id.root_passenger_registration), Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(R.id.root_passenger_registration),
+                            Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_LONG).show();
                 }
+            }
+        });
+    }
+
+    private void createNewPassengerUserWithEmailAndPassword(String email, String password){
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                            Snackbar.make(findViewById(R.id.root_passenger_registration),
+                                    "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Snackbar.make(findViewById(R.id.root_passenger_registration),
+                        e.getMessage(), Snackbar.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void writeNewPassengerInfo(String name, String email, String password, String phone, Point homeLocation, Point workLocation) {
+        Passenger passenger = new Passenger(name, email, password, phone, homeLocation, workLocation);
+        passengers.child("Passengers").child(email).setValue(passenger).addOnSuccessListener(aVoid -> {
+            Snackbar.make(findViewById(R.id.root_passenger_registration),
+                    "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Snackbar.make(findViewById(R.id.root_passenger_registration),
+                        e.getMessage(), Snackbar.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private void writeNewPassengerInfo(Passenger passenger) {
+        passengers.child("Passengers").child(passenger.getEmail()).setValue(passenger).addOnSuccessListener(aVoid -> {
+            Snackbar.make(findViewById(R.id.root_passenger_registration),
+                    "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Snackbar.make(findViewById(R.id.root_passenger_registration),
+                        e.getMessage(), Snackbar.LENGTH_SHORT).show();
+
             }
         });
     }

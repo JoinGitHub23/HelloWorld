@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.helloworld">
+    package="com.getto.work">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ActivitySelection"
+        <activity android:name="com.getto.work.activities.ActivitySelection"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,12 +20,21 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".activities.RegistrationActivity"
-            android:windowSoftInputMode="stateHidden"
-        />
+        <activity android:name="com.getto.work.activities.DriverRegistrationActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-        <activity android:name=".activities.MainActivity"
+        <activity android:name="com.getto.work.activities.PassengerRegistrationActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.getto.work.activities.MapActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -1,4 +1,4 @@
-package com.example.helloworld.activities;
+package com.getto.work.activities;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.helloworld.R;
+import com.getto.work.R;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
 
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
@@ -54,11 +54,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
-        MainActivity.this.mapboxMap = mapboxMap;
+        MapActivity.this.mapboxMap = mapboxMap;
         mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
 
             style.addImage(MARKER_IMAGE, BitmapFactory.decodeResource(
-                    MainActivity.this.getResources(), R.drawable.custom_marker)); // image for marker
+                    MapActivity.this.getResources(), R.drawable.custom_marker)); // image for marker
 
             enableLocationComponent(style); //add user location
             addMarkers(style); //add markers

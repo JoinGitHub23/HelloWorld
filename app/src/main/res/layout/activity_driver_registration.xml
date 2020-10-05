@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.RegistrationActivity">
+    tools:context=".activities.DriverRegistrationActivity">
 
 
     <ImageView
@@ -73,10 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/hint">
-                app:counterEnabled="false"
-                app:counterMaxLength="6"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/yellow">
+
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_password"
@@ -99,10 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/hint">
-                app:counterEnabled="false"
-                app:counterMaxLength="6"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/yellow">
+
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_confirmPassword"
@@ -145,7 +139,25 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/sign_up"
+                android:id="@+id/btn_select_home"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/ronded_button1"
+                android:text="@string/select_home"
+                android:textColor="@color/text_color" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_select_work"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/ronded_button1"
+                android:text="@string/select_work"
+                android:textColor="@color/text_color" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_sign_up"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -153,51 +165,6 @@
                 android:text="@string/sign_up"
                 android:textColor="@color/text_color" />
 
-            <RelativeLayout
-                android:id="@+id/relative_signin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="45dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/rounded_button"
-
-                    android:textColor="@color/black80" />
-
-                <TextView
-                    android:id="@+id/txt_register"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="@string/sign_in"
-                    android:textColor="@color/black80" />
-            </RelativeLayout>
-
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/regLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        android:orientation="horizontal">
-        <Button
-        android:id="@+id/btn_driver_selection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/regitration_btn_black_pressed_white"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/btn_registration"
-        android:textColor="@color/black80"
-        android:textSize="24sp" />
-</LinearLayout>
-
-
 </RelativeLayout>

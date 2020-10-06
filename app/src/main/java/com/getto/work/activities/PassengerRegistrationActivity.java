@@ -7,21 +7,17 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.getto.work.Passenger;
 import com.getto.work.R;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mapbox.geojson.Point;
@@ -31,9 +27,9 @@ import java.util.Objects;
 
 public class PassengerRegistrationActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth = FirebaseAuth.getInstance();;
-    private FirebaseDatabase db = FirebaseDatabase.getInstance();;
-    private DatabaseReference passengers = db.getReference("Passengers");;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();;
+    private DatabaseReference passengers = firebaseDatabase.getReference("Passengers");;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,10 +86,11 @@ public class PassengerRegistrationActivity extends AppCompatActivity {
                             phone.getText().toString(),
                             Point.fromLngLat(55.762981, 52.418611),
                             Point.fromLngLat(55.760372, 52.427470));
-                    createNewPassengerUserWithEmailAndPassword(email.getText().toString(), password.getText().toString());
+
+                    createNewPassengerUserWithEmailAndPassword(email.getText().toString(), password.getText().toString(), passenger);
                     writeNewPassengerInfo(passenger);
 
-                    Intent intent = new Intent(PassengerRegistrationActivity.this, PassengerMainActivity.class);
+                    Intent intent = new Intent(PassengerRegistrationActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 }catch (Exception e){
@@ -104,55 +101,50 @@ public class PassengerRegistrationActivity extends AppCompatActivity {
         });
     }
 
-    private void createNewPassengerUserWithEmailAndPassword(String email, String password){
-        auth.createUserWithEmailAndPassword(email, password)
+    private void createNewPassengerUserWithEmailAndPassword(String email, String password, Passenger passenger){
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                            Snackbar.make(findViewById(R.id.root_passenger_registration),
-                                    "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
+                        writeNewPassengerInfo(passenger);
+                        Snackbar.make(findViewById(R.id.root_passenger_registration),
+                                    "Регистрация успешна!", Snackbar.LENGTH_LONG).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Snackbar.make(findViewById(R.id.root_passenger_registration),
-                        e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        e.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
     private void writeNewPassengerInfo(String name, String email, String password, String phone, Point homeLocation, Point workLocation) {
         Passenger passenger = new Passenger(name, email, password, phone, homeLocation, workLocation);
-        passengers.child("Passengers").child(email).setValue(passenger).addOnSuccessListener(aVoid -> {
-            Snackbar.make(findViewById(R.id.root_passenger_registration),
-                    "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
-        }).addOnFailureListener(new OnFailureListener() {
+        passengers.child("Passengers").child(firebaseAuth.getCurrentUser().getUid()).
+                setValue(passenger.getEmail(), passenger.getName())
+        .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Snackbar.make(findViewById(R.id.root_passenger_registration),
-                        e.getMessage(), Snackbar.LENGTH_SHORT).show();
-
+                        e.getMessage(), Snackbar.LENGTH_LONG).show();
             }
         });
     }
 
     private void writeNewPassengerInfo(Passenger passenger) {
-        passengers.child("Passengers").child(passenger.getEmail()).setValue(passenger).addOnSuccessListener(aVoid -> {
-            Snackbar.make(findViewById(R.id.root_passenger_registration),
-                    "Регистрация успешна!", Snackbar.LENGTH_SHORT).show();
-        }).addOnFailureListener(new OnFailureListener() {
+        passengers.child("Passengers").child(firebaseAuth.getCurrentUser().getUid()).setValue(passenger.getEmail()).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Snackbar.make(findViewById(R.id.root_passenger_registration),
                         e.getMessage(), Snackbar.LENGTH_SHORT).show();
-
             }
         });
     }
 
     @Override
     public void onBackPressed(){
-        Intent intent = new Intent(PassengerRegistrationActivity.this, ActivitySelection.class);
+        Intent intent = new Intent(PassengerRegistrationActivity.this, RoleSelectionActivity.class);
         startActivity(intent);
         finish();
     }

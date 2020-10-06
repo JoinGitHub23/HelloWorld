@@ -27,7 +27,7 @@ public class DriverSignInActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
 
-        Button btnSignIn = (Button) findViewById(R.id.btn_sign_in);
+        Button btnSignIn = (Button) findViewById(R.id.btn_sign_out);
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -86,6 +86,9 @@
                     android:background="@drawable/rounded_view"
                     android:hint="@string/password"
                     android:inputType="textPassword"
+                    app:endIconMode="password_toggle"
+                    app:helperTextEnabled="true"
+                    app:helperText="@string/helper_text"
                     android:paddingEnd="10dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -113,6 +116,9 @@
                     android:background="@drawable/rounded_view"
                     android:hint="@string/confirm_password"
                     android:inputType="textPassword"
+                    app:endIconMode="password_toggle"
+                    app:helperTextEnabled="true"
+                    app:helperText="@string/helper_text"
                     android:paddingEnd="10dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -154,7 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/ronded_button1"
+                android:background="@drawable/rounded_button"
                 android:text="@string/select_home"
                 android:textColor="@color/text_color" />
 
@@ -163,7 +169,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/ronded_button1"
+                android:background="@drawable/rounded_button"
                 android:text="@string/select_work"
                 android:textColor="@color/text_color" />
 
@@ -172,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/ronded_button1"
+                android:background="@drawable/rounded_button"
                 android:text="@string/sign_up"
                 android:textColor="@color/text_color" />
 

@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.getto.work.R;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainPassengerActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 firebaseAuth.signOut();
-                startActivity(new Intent(MainActivity.this, SignInActivity.class));
+                startActivity(new Intent(MainPassengerActivity.this, SignInActivity.class));
                 finish();
             }
         });
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed(){
-        Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+        Intent intent = new Intent(MainPassengerActivity.this, SignInActivity.class);
         startActivity(intent);
         finish();
     }

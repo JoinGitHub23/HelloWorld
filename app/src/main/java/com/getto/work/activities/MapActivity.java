@@ -1,18 +1,23 @@
 package com.getto.work.activities;
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.getto.work.R;
+import com.google.android.material.snackbar.Snackbar;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
@@ -21,12 +26,14 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.style.sources.Source;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
@@ -34,44 +41,82 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private PermissionsManager permissionsManager;
     private MapboxMap mapboxMap;
     private MapView mapView;
+    private Point locationPoint;
 
+    private Source markerSource;
+    private Layer markerLayer;
 
     private static final String MARKER_SOURCE = "markers-source";
     private static final String MARKER_STYLE_LAYER = "markers-style-layer";
     private static final String MARKER_IMAGE = "custom-marker";
 
-
+    public Point getLocationPoint() {
+        return locationPoint;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
-        setContentView(R.layout.activity_passenger_registration);
+        setContentView(R.layout.activity_map);
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        markerLayer = new SymbolLayer(MARKER_STYLE_LAYER, MARKER_SOURCE).withProperties(
+                PropertyFactory.iconAllowOverlap(true),
+                PropertyFactory.iconIgnorePlacement(true),
+                PropertyFactory.iconImage(MARKER_IMAGE),
+                PropertyFactory.iconOffset(new Float[]{0f, -52f}),
+                PropertyFactory.iconSize(0.2f)
+        );
+
+
+        Button btnSave = (Button) findViewById(R.id.btn_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("lng", locationPoint.longitude());
+                intent.putExtra("lat", locationPoint.latitude());
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
     }
 
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapActivity.this.mapboxMap = mapboxMap;
         mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-
+            style.addLayer(markerLayer);
             style.addImage(MARKER_IMAGE, BitmapFactory.decodeResource(
                     MapActivity.this.getResources(), R.drawable.custom_marker)); // image for marker
-
             enableLocationComponent(style); //add user location
-            addMarkers(style); //add markers
+
+
+
+            markerSource = new GeoJsonSource(MARKER_SOURCE, Point.fromLngLat(0,0));
+            mapboxMap.getStyle().addSource(markerSource);
+        });
+        mapboxMap.addOnMapClickListener(new MapboxMap.OnMapClickListener() {
+            @Override
+            public boolean onMapClick(@NonNull LatLng latLng) {
+                Point point = Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude());
+                addMarker(point);
+                return true;
+            }
         });
     }
 
-    private void addMarkers(@NonNull Style loadedMapStyle) {
-        List<Feature> features = new ArrayList<>();
-        features.add(Feature.fromGeometry(Point.fromLngLat(52.4231, 55.7614)));
-        features.add(Feature.fromGeometry(Point.fromLngLat(52.4278, 55.7605)));
-        features.add(Feature.fromGeometry(Point.fromLngLat(52.4170, 55.7594 )));
+    private void addMarker(Point point) {
+        markerSource = new GeoJsonSource(MARKER_SOURCE, point);
+        
 
-        loadedMapStyle.addSource(new GeoJsonSource(MARKER_SOURCE, FeatureCollection.fromFeatures(features)));
+    }
+
+    private void addMarkers(@NonNull Style loadedMapStyle, Point point) {
+        loadedMapStyle.addSource(new GeoJsonSource(MARKER_SOURCE, point));
         loadedMapStyle.addLayer(new SymbolLayer(MARKER_STYLE_LAYER, MARKER_SOURCE)
                 .withProperties(
                         PropertyFactory.iconAllowOverlap(true),
@@ -158,6 +203,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(MapActivity.this, RoleSelectionActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
 

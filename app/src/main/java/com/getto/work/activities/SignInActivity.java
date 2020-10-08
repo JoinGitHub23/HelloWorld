@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.getto.work.R;
@@ -22,20 +21,26 @@ import java.util.Objects;
 
 public class SignInActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth;
-    private FirebaseUser firebaseUser;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
 
-        if (firebaseUser != null) {
-            startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            startActivity(new Intent(SignInActivity.this, MainPassengerActivity.class));
             finish();
         }
 
@@ -56,10 +61,10 @@ public class SignInActivity extends AppCompatActivity {
                     return;
                 }
 
-                firebaseAuth.signInWithEmailAndPassword(email.getText().toString(),  password.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                mAuth.signInWithEmailAndPassword(email.getText().toString(),  password.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+                        startActivity(new Intent(SignInActivity.this, MainPassengerActivity.class));
                         finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {

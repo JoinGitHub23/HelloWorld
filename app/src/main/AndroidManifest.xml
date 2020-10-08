@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.getto.work.activities.MainActivity"
+        <activity android:name="com.getto.work.activities.MainPassengerActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />

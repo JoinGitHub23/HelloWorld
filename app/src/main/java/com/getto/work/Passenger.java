@@ -1,27 +1,29 @@
 package com.getto.work;
 
-import com.mapbox.geojson.Point;
 
 public class Passenger {
-//    private Double lat;
-//    private Double lng;
+
     private String name;
     private String email;
     private String password;
     private String phone;
-    private Point workLocation;
-    private Point homeLocation;
+//    private Map<Long, Long> workLocation;
+//    private Map<Long, Long> homeLocation;
+    private com.getto.work.Point workLocation;
+    private com.getto.work.Point homeLocation;
 
 
-    public Passenger(String name, String email, String password, String phone, Point workLocation, Point homeLocation){
+    public Passenger(String name, String email, String password, String phone, Point workLocation, Point homeLocation) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
         this.workLocation = workLocation;
         this.homeLocation = homeLocation;
+    }
 
-
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
@@ -66,9 +68,5 @@ public class Passenger {
 
     public void setHomeLocation(Point homeLocation) {
         this.homeLocation = homeLocation;
-    }
-
-    public String getName() {
-        return name;
     }
 }

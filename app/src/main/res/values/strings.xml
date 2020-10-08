@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HelloWorld</string>
+    <string name="app_name">GetToWork</string>
     <string name="access_token">pk.eyJ1IjoiZmFpYXoyMyIsImEiOiJja2NvdWNyYzMwb25oMnhsZnhkZzY1dGViIn0.vh10zGVyrSxL6Sc593mZYw</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiZmFpYXoyMyIsImEiOiJja2NnN2w1djcwMG10MnNvMzRwc3gxeHdpIn0.33yl_fB2bDH4fX1Cc8dFJg</string>
     <string name="user_location_permission_explanation">Gib yor location, r8 nau!</string>
@@ -19,6 +19,7 @@
     <string name="select_home">Укажите Дом</string>
     <string name="select_work">Укажите Работу</string>
     <string name="helper_text">Не менее 6 символов</string>
+    <string name="save">Cохранить</string>
 
 
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -156,20 +157,20 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_select_home"
+                android:id="@+id/btn_select_home_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/rounded_button"
+                android:background="@drawable/btn_white_pressed_green"
                 android:text="@string/select_home"
                 android:textColor="@color/text_color" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_select_work"
+                android:id="@+id/btn_select_work_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/rounded_button"
+                android:background="@drawable/btn_white_pressed_green"
                 android:text="@string/select_work"
                 android:textColor="@color/text_color" />
 
@@ -178,7 +179,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/rounded_button"
+                android:background="@drawable/btn_white_pressed_green"
                 android:text="@string/sign_up"
                 android:textColor="@color/text_color" />
 

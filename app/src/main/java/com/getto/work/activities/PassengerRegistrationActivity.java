@@ -7,35 +7,68 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.getto.work.Passenger;
+import com.getto.work.Point;
 import com.getto.work.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.mapbox.geojson.Point;
 
 import java.util.Objects;
 
 
 public class PassengerRegistrationActivity extends AppCompatActivity {
 
-    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();;
-    private DatabaseReference passengers = firebaseDatabase.getReference("Passengers");;
+    private DatabaseReference passengers = firebaseDatabase.getReference("Passengers");
+
+    private Point homeLocation;
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data == null) {
+            return;
+        }
+        homeLocation.setLat(data.getDoubleExtra("lat", 0));
+        homeLocation.setLng(data.getDoubleExtra("lng", 0));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_registration);
         Window w = getWindow();
+
+        Button btnSelectHomeLocation = (Button) findViewById(R.id.btn_select_home_location);
+        btnSelectHomeLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PassengerRegistrationActivity.this, MapActivity.class);
+                startActivityForResult(intent, 1); finish();
+            }
+        });
+
+
+
+        Button btnSelectWorkLocation = (Button) findViewById(R.id.btn_select_work_location);
+        btnSelectWorkLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PassengerRegistrationActivity.this, MapActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Button btnSignUp = (Button) findViewById(R.id.btn_sign_up);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -84,15 +117,12 @@ public class PassengerRegistrationActivity extends AppCompatActivity {
                             email.getText().toString(),
                             password.getText().toString(),
                             phone.getText().toString(),
-                            Point.fromLngLat(55.762981, 52.418611),
-                            Point.fromLngLat(55.760372, 52.427470));
+                            new Point(55.762981, 52.418611),
+                            homeLocation);
 
-                    createNewPassengerUserWithEmailAndPassword(email.getText().toString(), password.getText().toString(), passenger);
-                    writeNewPassengerInfo(passenger);
+                    addNewPassengerToDB(email.getText().toString(), password.getText().toString(), passenger);
 
-                    Intent intent = new Intent(PassengerRegistrationActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+
                 }catch (Exception e){
                     Snackbar.make(findViewById(R.id.root_passenger_registration),
                             Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_LONG).show();
@@ -101,43 +131,31 @@ public class PassengerRegistrationActivity extends AppCompatActivity {
         });
     }
 
-    private void createNewPassengerUserWithEmailAndPassword(String email, String password, Passenger passenger){
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+    private void addNewPassengerToDB(String email, String password, Passenger passenger){
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onSuccess(AuthResult authResult) {
-                        writeNewPassengerInfo(passenger);
-                        Snackbar.make(findViewById(R.id.root_passenger_registration),
-                                    "Регистрация успешна!", Snackbar.LENGTH_LONG).show();
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            writeNewPassengerInfo(passenger);
+                            Intent intent = new Intent(PassengerRegistrationActivity.this, MainPassengerActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(PassengerRegistrationActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Snackbar.make(findViewById(R.id.root_passenger_registration),
-                        e.getMessage(), Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void writeNewPassengerInfo(String name, String email, String password, String phone, Point homeLocation, Point workLocation) {
-        Passenger passenger = new Passenger(name, email, password, phone, homeLocation, workLocation);
-        passengers.child("Passengers").child(firebaseAuth.getCurrentUser().getUid()).
-                setValue(passenger.getEmail(), passenger.getName())
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Snackbar.make(findViewById(R.id.root_passenger_registration),
-                        e.getMessage(), Snackbar.LENGTH_LONG).show();
-            }
-        });
+                });
     }
 
     private void writeNewPassengerInfo(Passenger passenger) {
-        passengers.child("Passengers").child(firebaseAuth.getCurrentUser().getUid()).setValue(passenger.getEmail()).addOnFailureListener(new OnFailureListener() {
+        firebaseDatabase.getReference("Passengers").child(mAuth.getCurrentUser().getUid()).
+                setValue(passenger).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Snackbar.make(findViewById(R.id.root_passenger_registration),
-                        e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(PassengerRegistrationActivity.this, e.getMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
